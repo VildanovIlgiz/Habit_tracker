@@ -1,0 +1,6 @@
+aiogram
+sqlalchemy
+python-dotenv
+apscheduler
+openai
+pytest
