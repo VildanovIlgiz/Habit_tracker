@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -10,9 +11,13 @@ from database.db import SessionLocal
 from services.reminder_service import ReminderService
 from services.stats_service import StatsService
 
+from config import get_settings
+
 logger = logging.getLogger(__name__)
 
 _scheduler: AsyncIOScheduler | None = None
+
+SCHEDULER_TIMEZONE = "Europe/Moscow"
 
 
 def start_scheduler(bot=None, dp=None) -> None:
@@ -21,33 +26,36 @@ def start_scheduler(bot=None, dp=None) -> None:
     if _scheduler is not None and _scheduler.running:
         return
 
-    _scheduler = AsyncIOScheduler()
+    settings = get_settings()
+    timezone = getattr(settings, "scheduler_timezone", SCHEDULER_TIMEZONE)
+
+    _scheduler = AsyncIOScheduler(timezone=timezone)
 
     if bot is not None:
         _scheduler.add_job(
             _send_morning_reminders,
-            CronTrigger(hour=9, minute=0),
+            CronTrigger(hour=9, minute=0, timezone=timezone),
             id="morning_reminders",
             replace_existing=True,
             kwargs={"bot": bot},
         )
         _scheduler.add_job(
             _send_evening_checkins,
-            CronTrigger(hour=20, minute=0),
+            CronTrigger(hour=20, minute=0, timezone=timezone),
             id="evening_checkins",
             replace_existing=True,
             kwargs={"bot": bot},
         )
         _scheduler.add_job(
             _send_weekly_report,
-            CronTrigger(day_of_week="sun", hour=21, minute=0),
+            CronTrigger(day_of_week="sun", hour=21, minute=0, timezone=timezone),
             id="weekly_report",
             replace_existing=True,
             kwargs={"bot": bot},
         )
 
     _scheduler.start()
-    logger.info("Scheduler started with APScheduler.")
+    logger.info("Scheduler started with APScheduler (timezone=%s).", timezone)
 
 
 def stop_scheduler() -> None:
