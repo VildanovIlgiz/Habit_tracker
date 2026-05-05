@@ -77,20 +77,28 @@ class StatsService:
 
         today = date.today()
         streak = 0
+        streak_started = False
 
         for day_offset in range(365):
             check_date = today - timedelta(days=day_offset)
             logs = self._repo.get_logs_for_user_on_date(user_id, check_date)
+
             if not logs:
+                if streak_started:
+                    break
                 if day_offset == 0:
                     continue
                 break
 
             done_count = sum(1 for log in logs if log.status)
             if done_count == 0:
+                if streak_started:
+                    break
                 if day_offset == 0:
                     continue
                 break
+
+            streak_started = True
             streak += 1
 
         return streak
