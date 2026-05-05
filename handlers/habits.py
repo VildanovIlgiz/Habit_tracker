@@ -139,10 +139,13 @@ def get_router(habit_service: HabitService) -> Router:
     async def fsm_title(message: Message, state: FSMContext) -> None:
         title = (message.text or "").strip()
         if not validate_habit_title(title):
-            await message.answer("Название не может быть пустым. Пришли название привычки.", reply_markup=cancel_keyboard())
+            await message.answer("❌ Название не может быть пустым. Пришли название привычки.", reply_markup=cancel_keyboard())
+            return
+        if len(title) < 2:
+            await message.answer("❌ Слишком короткое название (мин. 2 символа).", reply_markup=cancel_keyboard())
             return
         if len(title) > 200:
-            await message.answer("Слишком длинное название (макс. 200 символов).", reply_markup=cancel_keyboard())
+            await message.answer("❌ Слишком длинное название (макс. 200 символов).", reply_markup=cancel_keyboard())
             return
 
         await state.update_data(title=title)
