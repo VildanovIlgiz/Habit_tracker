@@ -78,8 +78,8 @@ def confirm_delete_keyboard(habit_id: int) -> InlineKeyboardMarkup:
     """Yes / Cancel confirmation before permanent delete."""
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="✅ Yes, delete", callback_data=_cb(CB_DELETE_YES, habit_id)),
-        InlineKeyboardButton(text="❌ Cancel",       callback_data=_cb(CB_DELETE_NO,  habit_id)),
+        InlineKeyboardButton(text="Да, удалить", callback_data=_cb(CB_DELETE_YES, habit_id)),
+        InlineKeyboardButton(text="Отмена",       callback_data=_cb(CB_DELETE_NO,  habit_id)),
     )
     return builder.as_markup()
 
@@ -88,7 +88,7 @@ def back_to_list_keyboard() -> InlineKeyboardMarkup:
     """Single 'Back to list' button used after certain actions."""
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="⬅️ Back to habits", callback_data=CB_BACK_LIST)
+        InlineKeyboardButton(text="Обратно к привычкам", callback_data=CB_BACK_LIST)
     )
     return builder.as_markup()
 
@@ -97,7 +97,7 @@ def cancel_keyboard() -> InlineKeyboardMarkup:
     """Shown during FSM input to let the user abort."""
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="❌ Cancel", callback_data="habit_cancel_fsm")
+        InlineKeyboardButton(text="Отменить", callback_data="habit_cancel_fsm")
     )
     return builder.as_markup()
 
@@ -106,8 +106,8 @@ def skip_keyboard() -> InlineKeyboardMarkup:
     """Shown for optional FSM steps."""
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="⏭ Skip", callback_data="habit_skip_step"),
-        InlineKeyboardButton(text="❌ Cancel", callback_data="habit_cancel_fsm"),
+        InlineKeyboardButton(text="Пропустить", callback_data="habit_skip_step"),
+        InlineKeyboardButton(text="Отменить", callback_data="habit_cancel_fsm"),
     )
     return builder.as_markup()
 
@@ -116,10 +116,10 @@ def schedule_keyboard() -> InlineKeyboardMarkup:
     """Quick-pick for schedule type during habit creation."""
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="📅 Every day",    callback_data="habit_sched:daily"),
+        InlineKeyboardButton(text="Каждый день",    callback_data="habit_sched:daily"),
         InlineKeyboardButton(text="💼 Weekdays only", callback_data="habit_sched:weekdays"),
     )
     builder.row(
-        InlineKeyboardButton(text="❌ Cancel", callback_data="habit_cancel_fsm"),
+        InlineKeyboardButton(text="Отменить", callback_data="habit_cancel_fsm"),
     )
     return builder.as_markup()
