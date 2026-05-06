@@ -7,10 +7,12 @@ from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
-from database.db import init_db
+from database.db import SessionLocal, init_db
 
 from config import get_settings
 from handlers import advice, habits, settings as settings_handler, start, stats
+from services import habit_service
+from services.habit_service import HabitService
 from utils.scheduler import start_scheduler, stop_scheduler
 
 
@@ -25,7 +27,18 @@ def create_dispatcher() -> Dispatcher:
     dp = Dispatcher()
 
     dp.include_router(start.router)
-    dp.include_router(habits.router)
+    
+    from services.habit_service import HabitService
+    from database.db import SessionLocal
+
+# Создаем сервис для работы с привычками
+    habit_service = HabitService(SessionLocal())
+
+# Получаем роутер через фабрику
+    dp.include_router(habits.get_router(habit_service))
+
+
+
     dp.include_router(stats.router)
     dp.include_router(advice.router)
     dp.include_router(settings_handler.router)
